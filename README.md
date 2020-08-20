@@ -1,13 +1,5 @@
 # DOT2BLIF
 
-
-## Compile the DOT2BLIF code from the source repository, where this README lies:
-
-```bash
-mkdir bin
-make
-```
-
 ## Install dependencies
 
 In order to run the Buffers command you will need to install graphviz, graphviz-dev and pkg-config
@@ -19,13 +11,18 @@ sudo apt install graphviz-dev
 sudo apt install pkg-config
 ```
 
-## Run buffer opt
+## Compile the DOT2BLIF code from the source repository, where this README lies:
+
+```bash
+mkdir bin && mkdir obj
+make
+```
+
+## Run 
 
 ```bash
 bin/convert blif -filename=name
 ```
-
-Here, period indicates target CP (ns).
 
 For example:
 ```bash
