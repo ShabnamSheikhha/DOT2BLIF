@@ -50,7 +50,8 @@ void DFnetlist_Impl::writePortChannel(std::ostream& s, channelID id) {
     Block tailBlock = blocks[tailPort.block];
     Block headBlock = blocks[headPort.block];
 
-    cout << "TEST:" << tailPort.full_name << endl;
+    // TODO: check the blif manual to see if ":" is allowed in names.
+    //  if so, instead of all this, you can just use port.full_name
     s << tailBlock.name << "." << tailPort.short_name << "*" << BlockType2String[tailBlock.type] << "*" << "~";
     s << headBlock.name << "." << headPort.short_name << "*" << BlockType2String[headBlock.type] << "*";
 }
@@ -65,14 +66,48 @@ bool DFnetlist_Impl::writeNodeType(std::ostream& s, BlockType t) {
     return true;
 }
 
+void DFnetlist_Impl::writeCircuitInputs(std::ostream &s) {
+    s << ".inputs\\\n";
+    ForAllBlocks(b) {
+        Block B = blocks[b];
+        if (B.type == FUNC_ENTRY) {
+            for (auto& p: B.outPorts) {
+                writePortChannel(s, ports[p].channel);
+                s << " ";
+            }
+        }
+    }
+    s << endl;
+}
+
+void DFnetlist_Impl::writeCircuitOutputs(std::ostream &s) {
+    s << ".output\\\n";
+    ForAllBlocks(b) {
+        Block B = blocks[b];
+        if (B.type == FUNC_EXIT) {
+            for (auto& p: B.inPorts) {
+                writePortChannel(s, ports[p].channel);
+                s << " ";
+            }
+        }
+    }
+    s << endl;
+}
+
+void DFnetlist_Impl::writeCircuitName(std::ostream &s) {
+    string name = getName();
+    if (name.empty()) name = "DataflowNetlist";
+    s << ".model " << name << endl;
+}
 
 bool DFnetlist_Impl::writeBlif(std::ostream& of) {
-    // TODO: add code for writing circuit name + input/outputs
-
-    // TODO: probably need to do a bit of preprocessing here :-?
+    writeCircuitName(of);
+    writeCircuitInputs(of);
+    writeCircuitOutputs(of);
 
     ForAllBlocks(b) {
         writeSubckt(of, b);
     }
+    of << ".end" << endl;
     return true;
 }

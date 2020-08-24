@@ -1717,6 +1717,9 @@ private:
     * @param s The output stream.
     * @param id The channel id.
     */
+    void writeCircuitName(std::ostream& s);
+    void writeCircuitInputs(std::ostream& s);
+    void writeCircuitOutputs(std::ostream& s);
     void writeSubckt(std::ostream& s, bbID id);
     bool writeNodeType(std::ostream& s, BlockType t);
     void writeNodeInOutPorts(std::ostream& s, bbID id);
