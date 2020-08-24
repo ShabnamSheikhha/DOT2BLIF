@@ -64,12 +64,12 @@ LFLAGS=`pkg-config libgvc --libs`
 #-static
 IDIR=$(LIBDIR)
 
-
 $(BINDIR)/$(APP) :: \
 		$(OBJDIR)/test.o $(OBJDIR)/Dataflow.o $(OBJDIR)/DFnetlist.o $(OBJDIR)/DFlib.o \
 		$(OBJDIR)/DFnetlist_channel_width.o $(OBJDIR)/DFnetlist_Connectivity.o\
 		$(OBJDIR)/DFnetlsit_BasicBlocks.o \
-		$(OBJDIR)/DFnetlist_check.o $(OBJDIR)/DFnetlist_read_dot.o $(OBJDIR)/DFnetlist_write_dot.o
+		$(OBJDIR)/DFnetlist_check.o $(OBJDIR)/DFnetlist_read_dot.o $(OBJDIR)/DFnetlist_write_dot.o \
+		$(OBJDIR)/DFnetlist_write_blif.o
 		$(CC) $(CFLAGS) $? -o $@ $(LDIR) $(LFLAGS) \
 
 $(OBJDIR)/DFnetlist.o :: $(SRCDIR)/DFnetlist.cpp
@@ -97,6 +97,9 @@ $(OBJDIR)/DFnetlist_read_dot.o :: $(SRCDIR)/DFnetlist_read_dot.cpp
 	$(CC) $(CFLAGS) -c $? -o $@ -I $(IDIR)
 
 $(OBJDIR)/DFnetlist_write_dot.o :: $(SRCDIR)/DFnetlist_write_dot.cpp
+	$(CC) $(CFLAGS) -c $? -o $@ -I $(IDIR)
+
+$(OBJDIR)/DFnetlist_write_blif.o :: $(SRCDIR)/DFnetlist_write_blif.cpp
 	$(CC) $(CFLAGS) -c $? -o $@ -I $(IDIR)
 
 $(OBJDIR)/test.o :: $(SRCDIR)/test.cpp

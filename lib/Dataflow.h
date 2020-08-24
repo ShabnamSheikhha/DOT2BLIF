@@ -568,6 +568,21 @@ public:
      */
     bool writeDot(std::ostream& s);
 
+    /**
+     * @brief Writes the dataflow netlist in blif format.
+     * @param filename The name of the file. In case the filename is empty,
+     * it is written into cout.
+     * @return true if successful, and false otherwise.
+     */
+    bool writeBlif(const std::string& filename = "");
+
+    /**
+     * @brief Writes the dataflow netlist in blif format.
+     * @param s The output stream.
+     * @return True if successful, and false otherwise.
+     */
+    bool writeBlif(std::ostream& s);
+
     bool writeDotMG(const std::string& filename = "");
     bool writeDotMG(std::ostream& s);
 

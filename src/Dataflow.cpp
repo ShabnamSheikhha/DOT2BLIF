@@ -348,6 +348,16 @@ bool DFnetlist::writeDot(std::ostream& s)
     return DFI->writeDot(s);
 }
 
+bool DFnetlist::writeBlif(const string& filename)
+{
+    return DFI->writeBlif(filename);
+}
+
+bool DFnetlist::writeBlif(std::ostream& s)
+{
+    return DFI->writeBlif(s);
+}
+
 bool DFnetlist::writeDotMG(const std::string &filename) {
     return DFI->writeDotMG(filename);
 }

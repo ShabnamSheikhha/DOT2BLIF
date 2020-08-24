@@ -170,9 +170,9 @@ int main_shab(const vecParams& params){
         return 1;
     }
 
-
-    DF.writeDot(input.graph_name + "_graph_output.dot");
-    DF.writeDotBB(input.graph_name + "_bbgraph_output.dot");
+    DF.writeBlif(input.graph_name + "_graph.blif");
+    //DF.writeDot(input.graph_name + "_graph_output.dot");
+    //DF.writeDotBB(input.graph_name + "_bbgraph_output.dot");
 
     return 0;
 }
