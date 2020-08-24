@@ -1713,6 +1713,15 @@ private:
     void writeArcDot(std::ostream& s, bbArcID id);
 
     /**
+    * @brief Writes the information of a block in blif format.
+    * @param s The output stream.
+    * @param id The channel id.
+    */
+    void writeSubckt(std::ostream& s, bbID id);
+    bool writeNodeType(std::ostream& s, BlockType t);
+
+
+    /**
      * @brief Defines the mark of all blocks to a certain value.
      * @param value Value of the mark.
      */

@@ -163,7 +163,8 @@ int main_shab(const vecParams& params){
     parse_user_input(params, input);
     print_input(input);
 
-    DFnetlist DF(input.graph_name + "_graph.dot", input.graph_name + "_bbgraph.dot");
+    //DFnetlist DF(input.graph_name + "_graph.dot", input.graph_name + "_bbgraph.dot");
+    DFnetlist DF(input.graph_name + "_graph.dot");
 
     if (DF.hasError()) {
         cerr << DF.getError() << endl;
