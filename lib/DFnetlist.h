@@ -1719,6 +1719,8 @@ private:
     */
     void writeSubckt(std::ostream& s, bbID id);
     bool writeNodeType(std::ostream& s, BlockType t);
+    void writeNodeInOutPorts(std::ostream& s, bbID id);
+    void writePortChannel(std::ostream& s, channelID id);
 
 
     /**

@@ -20,8 +20,39 @@ void DFnetlist_Impl::writeSubckt(std::ostream& s, bbID id) {
     Block& B = blocks[id];
     s << "#Node " << B.name << endl;
     if (writeNodeType(s, B.type)) {
-
+        writeNodeInOutPorts(s, id);
     }
+}
+
+void DFnetlist_Impl::writeNodeInOutPorts(std::ostream& s, bbID id) {
+    Block& B = blocks[id];
+    for (auto& inP: B.inPorts) {
+        Port& P = ports[inP];
+        s << P.short_name << "=";
+        writePortChannel(s, P.channel);
+        s << "\t";
+    }
+
+    for (auto& outP: B.outPorts) {
+        Port& P = ports[outP];
+        s << P.short_name << "=";
+        writePortChannel(s, P.channel);
+        s << "\t";
+    }
+    s << endl;
+}
+
+void DFnetlist_Impl::writePortChannel(std::ostream& s, channelID id) {
+    Channel C = channels[id];
+
+    Port tailPort = ports[C.src];
+    Port headPort = ports[C.dst];
+    Block tailBlock = blocks[tailPort.block];
+    Block headBlock = blocks[headPort.block];
+
+    cout << "TEST:" << tailPort.full_name << endl;
+    s << tailBlock.name << "." << tailPort.short_name << "*" << BlockType2String[tailBlock.type] << "*" << "~";
+    s << headBlock.name << "." << headPort.short_name << "*" << BlockType2String[headBlock.type] << "*";
 }
 
 bool DFnetlist_Impl::writeNodeType(std::ostream& s, BlockType t) {
