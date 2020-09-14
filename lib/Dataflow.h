@@ -574,14 +574,14 @@ public:
      * it is written into cout.
      * @return true if successful, and false otherwise.
      */
-    bool writeBlif(const std::string& filename = "");
+    bool writeBlif(const std::string& filename = "", int indent = 0);
 
     /**
      * @brief Writes the dataflow netlist in blif format.
      * @param s The output stream.
      * @return True if successful, and false otherwise.
      */
-    bool writeBlif(std::ostream& s);
+    bool writeBlif(std::ostream& s, int indent = 0);
 
     bool writeDotMG(const std::string& filename = "");
     bool writeDotMG(std::ostream& s);

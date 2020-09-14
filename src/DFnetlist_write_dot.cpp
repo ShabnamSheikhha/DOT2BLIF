@@ -78,18 +78,17 @@ bool DFnetlist_Impl::writeDot(const string& filename)
     return FileUtil::write(of.str(), filename, getError());
 }
 
-bool DFnetlist_Impl::writeDot(std::ostream& of)
-{
+bool DFnetlist_Impl::writeDot(std::ostream& of) {
     of << "// Number of blocks: " << numBlocks() << endl;
     of << "// Number of channels: " << numChannels() << endl;
     of << "Digraph ";
-    const string& name = getName();
+    const string &name = getName();
     if (name.empty()) of << "DataflowNetlist";
     else of << name;
     of << " {" << endl;
 
     of << endl << "  // Blocks" << endl;
-    
+
     // Lana 03/07/19
     /*
     setBlocks b_inBBs;
@@ -130,25 +129,25 @@ bool DFnetlist_Impl::writeDot(std::ostream& of)
     }*/
 
 // Print nodes in BB clusters
-for (bbID i = 1; i <= BBG.numBasicBlocks(); i++) {
-    of <<  "subgraph cluster_" + to_string(i) + " {\n";
-    of << "color = \"darkgreen\"\n";
-	of << "label = \"block"+ to_string(i) +"\"\n";
-    	
-    ForAllBlocks(b) {
-    	bbID bb_src = getBasicBlock(b);
-  
-        if (bb_src == i) 
-            writeBlockDot(of, b);  
-    }
+    for (bbID i = 1; i <= BBG.numBasicBlocks(); i++) {
+        of << "subgraph cluster_" + to_string(i) + " {\n";
+        of << "color = \"darkgreen\"\n";
+        of << "label = \"block" + to_string(i) + "\"\n";
 
-    of << "}\n";
-}
+        ForAllBlocks(b) {
+            bbID bb_src = getBasicBlock(b);
+
+            if (bb_src == i)
+                writeBlockDot(of, b);
+        }
+
+        of << "}\n";
+    }
 // Print remaining nodes (bbID = 0)
     ForAllBlocks(b) {
         bbID bb_src = getBasicBlock(b);
-        
-        if (bb_src == 0) 
+
+        if (bb_src == 0)
             writeBlockDot(of, b);
     }
 

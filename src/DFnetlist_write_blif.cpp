@@ -7,8 +7,14 @@
 using namespace Dataflow;
 using namespace std;
 
+std::string get_indent_string(int indent) {
+    std::string indent_str("");
+    for (int i = 0; i < indent; i++)
+        indent_str = indent_str + std::string("\t");
+    return indent_str;
+}
 
-bool DFnetlist_Impl::writeBlif(const string& filename)
+bool DFnetlist_Impl::writeBlif(const string& filename, int indent)
 {
     ostringstream of;
     if (not writeBlif(of)) return false;
@@ -16,16 +22,20 @@ bool DFnetlist_Impl::writeBlif(const string& filename)
 }
 
 // TODO: handle indenting
-void DFnetlist_Impl::writeSubckt(std::ostream& s, bbID id) {
+void DFnetlist_Impl::writeSubckt(std::ostream& s, bbID id, int indent) {
     Block& B = blocks[id];
-    s << "#Node " << B.name << endl;
-    if (writeNodeType(s, B.type)) {
-        writeNodeInOutPorts(s, id);
+    s << get_indent_string(indent) << "#Node " << B.name << endl;
+    if (skipNode(B.type)) {
+        s << get_indent_string(indent) << "#Skipped" << endl;
+    } else {
+        writeNodeType(s, B.type, indent);
+        writeNodeInOutPorts(s, id, indent + 1);
     }
 }
 
-void DFnetlist_Impl::writeNodeInOutPorts(std::ostream& s, bbID id) {
+void DFnetlist_Impl::writeNodeInOutPorts(std::ostream& s, bbID id, int indent) {
     Block& B = blocks[id];
+    s << get_indent_string(indent);
     for (auto& inP: B.inPorts) {
         Port& P = ports[inP];
         s << P.short_name << "=";
@@ -56,18 +66,19 @@ void DFnetlist_Impl::writePortChannel(std::ostream& s, channelID id) {
     s << headBlock.name << "." << headPort.short_name << "*" << BlockType2String[headBlock.type] << "*";
 }
 
-bool DFnetlist_Impl::writeNodeType(std::ostream& s, BlockType t) {
-
-    if (t == FUNC_ENTRY || t == FUNC_EXIT || t == UNKNOWN) {
-        s << "#Skipped" << endl;
-        return false;
-    }
-    s << ".subckt " << BlockType2String[t] << "\\" << endl;
-    return true;
+void DFnetlist_Impl::writeNodeType(std::ostream& s, BlockType t, int indent) {
+    //assert(!skipNode(t));
+    if (skipNode(t)) return;
+    s << get_indent_string(indent) << ".subckt " << BlockType2String[t] << "\\" << endl;
 }
 
-void DFnetlist_Impl::writeCircuitInputs(std::ostream &s) {
-    s << ".inputs\\\n";
+bool DFnetlist_Impl::skipNode(BlockType t) {
+    return t == FUNC_ENTRY || t == FUNC_EXIT || t == UNKNOWN;
+}
+
+void DFnetlist_Impl::writeCircuitInputs(std::ostream &s, int indent) {
+    s << get_indent_string(indent) << ".inputs\\\n";
+    s << get_indent_string(indent + 1);
     ForAllBlocks(b) {
         Block B = blocks[b];
         if (B.type == FUNC_ENTRY) {
@@ -80,8 +91,9 @@ void DFnetlist_Impl::writeCircuitInputs(std::ostream &s) {
     s << endl;
 }
 
-void DFnetlist_Impl::writeCircuitOutputs(std::ostream &s) {
-    s << ".output\\\n";
+void DFnetlist_Impl::writeCircuitOutputs(std::ostream &s, int indent) {
+    s << get_indent_string(indent) << ".outputs\\\n";
+    s << get_indent_string(indent + 1);
     ForAllBlocks(b) {
         Block B = blocks[b];
         if (B.type == FUNC_EXIT) {
@@ -94,20 +106,22 @@ void DFnetlist_Impl::writeCircuitOutputs(std::ostream &s) {
     s << endl;
 }
 
-void DFnetlist_Impl::writeCircuitName(std::ostream &s) {
+void DFnetlist_Impl::writeCircuitName(std::ostream &s, int indent) {
     string name = getName();
     if (name.empty()) name = "DataflowNetlist";
-    s << ".model " << name << endl;
+    s << get_indent_string(indent) << ".model " << name << endl;
 }
 
-bool DFnetlist_Impl::writeBlif(std::ostream& of) {
-    writeCircuitName(of);
-    writeCircuitInputs(of);
-    writeCircuitOutputs(of);
+bool DFnetlist_Impl::writeBlif(std::ostream& of, int indent) {
+    writeCircuitName(of, indent);
+
+    writeCircuitInputs(of, indent + 1);
+    writeCircuitOutputs(of, indent + 1);
 
     ForAllBlocks(b) {
-        writeSubckt(of, b);
+        writeSubckt(of, b, indent + 1);
     }
-    of << ".end" << endl;
+
+    of << get_indent_string(indent) << ".end" << endl;
     return true;
 }
